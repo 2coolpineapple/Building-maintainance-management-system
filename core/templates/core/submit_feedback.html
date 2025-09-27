@@ -1,0 +1,94 @@
+{% extends 'core/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-star"></i> Submit Feedback
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5>Complaint Details</h5>
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <p><strong>Category:</strong> {{ complaint.category }}</p>
+                                <p><strong>Location:</strong> {{ complaint.location }}</p>
+                                <p><strong>Status:</strong> 
+                                    <span class="badge bg-success">{{ complaint.get_status_display }}</span>
+                                </p>
+                                <p class="mb-0"><strong>Resolved on:</strong> 
+                                    {{ complaint.updated_at|date:"M d, Y" }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Rating</label>
+                            <div class="rating-input">
+                                {{ form.rating|addclass:"form-select" }}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Additional Comments</label>
+                            {{ form.comments|addclass:"form-control" }}
+                            <div class="form-text">
+                                Please share your experience with the complaint resolution process.
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-paper-plane"></i> Submit Feedback
+                            </button>
+                            <a href="{% url 'complaint_detail' complaint.pk %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Complaint
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .rating-stars {
+        font-size: 1.5rem;
+        color: #ffc107;
+    }
+    .rating-stars i {
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .rating-stars i:hover {
+        transform: scale(1.2);
+    }
+</style>
+
+<script>
+    // Form validation
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+{% endblock %}

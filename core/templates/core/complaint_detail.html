@@ -1,0 +1,145 @@
+{% extends 'core/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container py-4 mt-5">
+    <div class="row">
+        <!-- Complaint Details -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Complaint #{{ complaint.id }}</h4>
+                    <span class="badge {% if complaint.status == 'pending' %}bg-warning
+                                     {% elif complaint.status == 'in_progress' %}bg-info
+                                     {% else %}bg-success{% endif %}">
+                        {{ complaint.get_status_display }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>Category:</strong> {{ complaint.category }}</p>
+                            <p><strong>Location:</strong> {{ complaint.location }}</p>
+                            <p><strong>Submitted By:</strong> {{ complaint.user.username }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Created:</strong> {{ complaint.created_at|date:"M d, Y H:i" }}</p>
+                            <p><strong>Last Updated:</strong> {{ complaint.updated_at|date:"M d, Y H:i" }}</p>
+                            <p><strong>Assigned To:</strong> {{ complaint.assigned_officer|default:"Not Assigned" }}</p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <h5>Description</h5>
+                        <p class="border rounded p-3 bg-light">{{ complaint.description }}</p>
+                    </div>
+
+                    {% if complaint.resolution_remarks %}
+                    <div class="mb-3">
+                        <h5>Resolution Remarks</h5>
+                        <p class="border rounded p-3 bg-light">{{ complaint.resolution_remarks }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if user.is_staff or user == complaint.assigned_officer %}
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        <input type="hidden" name="update_status" value="1">
+                        <div class="mb-3">
+                            <label class="form-label">Update Status</label>
+                            {{ form.status|addclass:"form-select" }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Resolution Remarks</label>
+                            {{ form.resolution_remarks|addclass:"form-control" }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Update Status
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Status History -->
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Status History</h5>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        {% for log in status_logs %}
+                        <div class="mb-3 pb-3 border-bottom">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="mb-1">
+                                    <span class="badge {% if log.status == 'pending' %}bg-warning
+                                                     {% elif log.status == 'in_progress' %}bg-info
+                                                     {% else %}bg-success{% endif %}">
+                                        {{ log.status|title }}
+                                    </span>
+                                </h6>
+                                <small class="text-muted">{{ log.created_at|date:"M d, Y H:i" }}</small>
+                            </div>
+                            {% if log.remarks %}
+                            <p class="mb-0 mt-2">{{ log.remarks }}</p>
+                            {% endif %}
+                            <small class="text-muted">Updated by: {{ log.updated_by.username }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <!-- Actions -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
+                        {% if user.is_superuser or user.is_officer %}
+                        <a href="{% url 'reassign_officer' complaint.pk %}" class="btn btn-outline-primary">
+                            <i class="fas fa-user-edit"></i> Reassign Staff
+                        </a>
+                        {% endif %}
+                        {% if complaint.status == 'resolved' and complaint.user == user and not feedback %}
+                        <a href="{% url 'submit_feedback' complaint.pk %}" class="btn btn-outline-success">
+                            <i class="fas fa-star"></i> Provide Feedback
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedback -->
+            {% if feedback %}
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Feedback</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <strong>Rating:</strong>
+                        {% for i in "12345"|make_list %}
+                        <i class="fas fa-star {% if forloop.counter <= feedback.rating %}text-warning{% else %}text-muted{% endif %}"></i>
+                        {% endfor %}
+                    </div>
+                    {% if feedback.comments %}
+                    <div class="mb-2">
+                        <strong>Comments:</strong>
+                        <p class="mb-0">{{ feedback.comments }}</p>
+                    </div>
+                    {% endif %}
+                    <small class="text-muted">Submitted on {{ feedback.created_at|date:"M d, Y" }}</small>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

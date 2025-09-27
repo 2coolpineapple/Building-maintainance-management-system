@@ -1,0 +1,46 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">BMP System</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        {% if user.is_authenticated %}
+        <ul class="navbar-nav">
+            {% if user.is_officer %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'officer_dashboard' %}">Office Dashboard</a>
+            </li>
+            {% elif user.is_superuser %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'registration_request' %}">Requests</a>
+            </li>
+            {% elif user.is_staff %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'dashboard' %}">Staff Dashboard</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
+        </ul>
+        {% if user.is_superuser %}
+        <div class="text-white ms-3">
+            <small>Debug: is_superuser={{ user.is_superuser }}, is_staff={{ user.is_staff }}, is_officer={{ user.is_officer }}</small>
+        </div>
+        {% endif %}
+        {% else %}
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">Login</a>
+            </li>
+        </ul>
+        {% endif %}
+    </div>
+</nav>

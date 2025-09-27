@@ -1,0 +1,33 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <h2>Review Registration Request</h2>
+    <dl class="row">
+        <dt class="col-sm-3">Full Name</dt>
+        <dd class="col-sm-9">{{ request_obj.full_name }}</dd>
+
+        <dt class="col-sm-3">Email</dt>
+        <dd class="col-sm-9">{{ request_obj.email }}</dd>
+
+        <dt class="col-sm-3">Phone</dt>
+        <dd class="col-sm-9">{{ request_obj.phone }}</dd>
+
+        <dt class="col-sm-3">Department</dt>
+        <dd class="col-sm-9">{{ request_obj.department }}</dd>
+
+        <dt class="col-sm-3">Role</dt>
+        <dd class="col-sm-9">{{ request_obj.get_role_display }}</dd>
+
+        <dt class="col-sm-3">Status</dt>
+        <dd class="col-sm-9">{{ request_obj.status }}</dd>
+    </dl>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" name="action" value="accept" class="btn btn-success">Accept</button>
+        <button type="submit" name="action" value="deny" class="btn btn-danger">Deny</button>
+        <a href="{% url 'admin_registration_requests' %}" class="btn btn-secondary">Back to Requests</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,150 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4 text-primary">Help & FAQ</h2>
+
+    <!-- FAQ Accordion with animation -->
+    <style>
+        .accordion-button {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .accordion-button:not(.collapsed) {
+            background-color: #0d6efd;
+            color: white;
+            box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+        }
+        .accordion-body {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+
+    <div class="accordion mb-5" id="faqAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                    How can I check train timings?
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    You can check train timings on the official Indian Railways website or mobile app.
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    How do I book train tickets?
+                </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Tickets can be booked online via IRCTC or at railway stations.
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingThree">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    What is the refund policy for tickets?
+                </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Refunds are processed as per the Indian Railways refund policy available on their website.
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFour">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                    What is the luggage allowance?
+                </button>
+            </h2>
+            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Luggage allowance varies by class; please refer to the official guidelines.
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFive">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                    What is the emergency contact number?
+                </button>
+            </h2>
+            <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    For emergencies, dial 100. For customer support, call +91 12345 67890.
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingSix">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                    How can I track my complaint status?
+                </button>
+            </h2>
+            <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    You can track your complaint status by entering your complaint ID on the 'Track Complaint' page.
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingSeven">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                    How do I submit a new complaint?
+                </button>
+            </h2>
+            <div id="collapseSeven" class="accordion-collapse collapse" aria-labelledby="headingSeven" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    You can submit a new complaint by navigating to the 'Submit Complaint' page and filling out the form.
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingEight">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
+                    Who can I contact for urgent maintenance issues?
+                </button>
+            </h2>
+            <div id="collapseEight" class="accordion-collapse collapse" aria-labelledby="headingEight" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    For urgent maintenance issues, please contact the assigned officer or the maintenance department directly.
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingNine">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNine" aria-expanded="false" aria-controls="collapseNine">
+                    How do I provide feedback on a resolved complaint?
+                </button>
+            </h2>
+            <div id="collapseNine" class="accordion-collapse collapse" aria-labelledby="headingNine" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    You can provide feedback by clicking the 'Provide Feedback' button on the complaint detail page after your complaint is resolved.
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTen">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTen" aria-expanded="false" aria-controls="collapseTen">
+                    How long does it take to resolve a complaint?
+                </button>
+            </h2>
+            <div id="collapseTen" class="accordion-collapse collapse" aria-labelledby="headingTen" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Resolution times vary depending on the nature of the complaint. You can check the status history on the complaint detail page for updates.
+                </div>
+            </div>
+        </div>
+
+    
+</script>
+{% endblock %}

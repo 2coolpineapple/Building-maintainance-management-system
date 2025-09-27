@@ -1,0 +1,185 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Google Fonts for a modern, friendly touch */
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Lato:wght@400;700&display=swap');
+
+    body {
+        background-color: #f0f2f5; /* A soft, light background for contrast */
+        font-family: 'Lato', sans-serif;
+        color: #333;
+    }
+
+    .container.py-4 {
+        padding-top: 6rem !important; /* Ample space from the top */
+        padding-bottom: 4rem !important;
+    }
+
+    .tracking-card {
+        background-color: #ffffff;
+        border: none; /* No harsh borders */
+        border-radius: 15px; /* Gentle rounded corners */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* A pleasant, soft shadow */
+        overflow: hidden;
+        animation: fadeInScale 0.7s ease-out forwards; /* Subtle entry animation */
+    }
+
+    .card-header-custom {
+        background: linear-gradient(135deg, #0056b3, #003366); /* Deep blue gradient header */
+        color: #ffffff;
+        padding: 1.8rem 2rem; /* Generous padding */
+        border-bottom: none;
+        font-family: 'Montserrat', sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        position: relative; /* For potential future decorative elements */
+    }
+
+    .card-header-custom h4 {
+        font-weight: 700;
+        margin-bottom: 0;
+        font-size: 2rem; /* Prominent title */
+        letter-spacing: 0.8px;
+    }
+
+    .card-header-custom .fas {
+        margin-right: 18px;
+        font-size: 2.2rem; /* Large icon for impact */
+    }
+
+    .card-body-custom {
+        padding: 2.5rem; /* Spacious interior */
+    }
+
+    .form-label-custom {
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 0.6rem; /* A little more space */
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.1rem; /* Slightly larger label text */
+    }
+
+    .form-control-custom {
+        border-radius: 8px; /* Matching input field corners */
+        padding: 0.85rem 1.2rem; /* More comfortable padding */
+        border: 1px solid #ced4da;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+    }
+
+    .form-control-custom:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+        outline: none;
+    }
+
+    .btn-track {
+        background: linear-gradient(45deg, #007bff, #0096FF); /* Brighter blue start to more vibrant blue end */
+        border: none;
+        padding: 0.9rem 2rem; /* Larger, more inviting button */
+        font-size: 1.15rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+        display: flex; /* For icon alignment */
+        align-items: center;
+        justify-content: center;
+        gap: 10px; /* Space between icon and text */
+        color: #ffffff; /* Explicitly set text color to white */
+    }
+
+    .btn-track:hover {
+        transform: translateY(-3px); /* Lift effect on hover */
+        box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+        background: linear-gradient(45deg, #0056b3, #007bff); /* Slightly darker on hover for contrast */
+        color: #ffffff; /* Ensure text remains white on hover */
+    }
+
+    .alert {
+        border-radius: 8px;
+        font-size: 1rem;
+        padding: 1rem 1.5rem;
+        margin-top: 1.5rem; /* More space above alert */
+    }
+
+    /* Subtle animation for card entry */
+    @keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    /* Helper text below input */
+    .form-text-custom {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-top: 0.4rem;
+        margin-left: 0.2rem; /* Slight indent */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .card-body-custom {
+            padding: 1.5rem;
+        }
+        .card-header-custom h4 {
+            font-size: 1.7rem;
+        }
+        .card-header-custom .fas {
+            font-size: 1.9rem;
+            margin-right: 10px;
+        }
+        .form-control-custom, .btn-track {
+            padding: 0.7rem 1.2rem;
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5"> {# Slightly adjusted column size for focus #}
+            <div class="tracking-card">
+                <div class="card-header-custom">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-search"></i> Track Your Complaint
+                    </h4>
+                </div>
+                <div class="card-body-custom">
+                    {% if error %}
+                        <div class="alert alert-danger" role="alert" style="display:block;">
+                            {{ error }}
+                        </div>
+                    {% endif %}
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="complaint_id" class="form-label-custom">Enter your Complaint ID</label>
+                            <input type="number" class="form-control-custom" id="complaint_id" name="complaint_id" required placeholder="e.g., 1234567890">
+                            <small class="form-text-custom">This is the unique number you received after submitting your complaint.</small>
+                        </div>
+                        <div class="d-grid gap-2 mt-4"> {# Use d-grid for full-width button #}
+                            <button type="submit" class="btn btn-track">
+                                <i class="fas fa-search-location"></i> Track Status
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+{% endblock %}

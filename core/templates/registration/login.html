@@ -1,0 +1,253 @@
+{% extends 'core/base.html' %}
+{% load static %} {# Include if you plan to use static files like custom CSS/JS #}
+
+{% block content %}
+<style>
+    /* Google Fonts - Montserrat and Lato for a friendly and modern look */
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Lato:wght@400;700&display=swap');
+
+    body {
+        background-color: #f0f2f5; /* Light grey background for a softer feel, consistent with other forms */
+        font-family: 'Lato', sans-serif;
+        color: #333;
+    }
+
+    .container.py-4 {
+        padding-top: 6rem !important; /* More space from navbar */
+        padding-bottom: 4rem !important;
+    }
+
+    .card {
+        border: none; /* Remove default Bootstrap card border */
+        border-radius: 15px; /* Softer rounded corners */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* More pronounced shadow */
+        overflow: hidden; /* Ensures rounded corners apply to header */
+        animation: fadeInScale 0.7s ease-out forwards; /* Entrance animation */
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #0056b3, #003366); /* Gradient header, consistent with other forms */
+        color: #ffffff;
+        padding: 1.5rem 2rem; /* More padding */
+        border-bottom: none; /* Remove header border */
+        font-family: 'Montserrat', sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .card-header h4 {
+        font-weight: 700;
+        margin-bottom: 0;
+        font-size: 1.8rem; /* Slightly larger title */
+        letter-spacing: 0.5px;
+    }
+
+    .card-header .fas { /* Style for Font Awesome icons in header */
+        margin-right: 15px;
+        font-size: 2rem; /* Larger icon */
+    }
+
+    .card-body {
+        padding: 2.5rem; /* Increased padding inside body */
+        background-color: #ffffff;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 0.5rem;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 8px; /* Softer input fields, consistent */
+        padding: 0.75rem 1rem;
+        border: 1px solid #ced4da;
+        transition: all 0.3s ease;
+        font-family: 'Lato', sans-serif; /* Consistent font for inputs */
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+        outline: none;
+    }
+
+    .form-check-label {
+        font-weight: 400; /* Regular weight for checkbox label */
+        color: #333;
+    }
+
+    .form-check-input:checked {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .alert {
+        border-radius: 8px; /* Match input field rounding */
+        font-family: 'Lato', sans-serif;
+    }
+
+    .btn-login-blue { /* Specific style for login button */
+        background: linear-gradient(45deg, #007bff, #0056b3); /* Blue gradient for login */
+        border: none;
+        padding: 0.8rem 1.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+        color: #ffffff; /* Text color for the button */
+        display: flex; /* To align icon and text */
+        align-items: center;
+        justify-content: center;
+        gap: 8px; /* Space between icon and text */
+    }
+
+    .btn-login-blue:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+        background: linear-gradient(45deg, #0056b3, #003366); /* Darker blue on hover */
+    }
+
+    .btn-login-blue .fas {
+        font-size: 1rem; /* Icon size inside button */
+    }
+
+    a {
+        color: #007bff; /* Consistent link color */
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    a:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
+
+    /* Animations */
+    @keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    /* Media Queries for responsiveness */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1.5rem;
+        }
+        .card-header h4 {
+            font-size: 1.5rem;
+        }
+        .card-header .fas {
+            font-size: 1.7rem;
+            margin-right: 10px;
+        }
+        .form-control, .form-select, .btn {
+            padding: 0.6rem 1rem;
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<div class="container py-4 ">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5"> {# Slightly wider for better balance, but keeping it focused #}
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-sign-in-alt"></i> Staff Login
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    <form method="post" novalidate autocomplete="off" id="loginForm">
+                        {% csrf_token %}
+                        <input type="text" name="fakeusernameremembered" style="display:none" />
+                        <input type="password" name="fakepasswordremembered" style="display:none" />
+
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Username</label>
+                            <input type="text" name="username" id="id_username" class="form-control" required placeholder="Enter your username" autocomplete="off">
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label">Password</label>
+                            <input type="password" name="password" id="id_password" class="form-control" required placeholder="Enter your password" autocomplete="new-password">
+                        </div>
+                        <!-- Removed role selection as per user request -->
+                        <div class="form-check mb-3">
+                            <input type="checkbox" name="remember_me" id="id_remember_me" class="form-check-input">
+                            <label for="id_remember_me" class="form-check-label">Remember Me</label>
+                        </div>
+                        <div class="d-grid gap-2 mb-3"> {# Using d-grid for full-width buttons #}
+                            <button type="submit" class="btn btn-login-blue">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </button>
+                        </div>
+                        <div class="text-center mb-3">
+                            <a href="{% url 'password_reset' %}" class="d-block">Forgot Password?</a>
+                        </div>
+                        <div class="text-center">
+                            <a href="{% url 'register' %}" class="d-block">New Staff? Register Here</a>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Clear username and password fields on page load and manage placeholders
+    window.onload = function() {
+        var usernameInput = document.getElementById('id_username');
+        var passwordInput = document.getElementById('id_password');
+        var loginForm = document.getElementById('loginForm');
+
+        // Function to set and clear placeholder on focus/blur
+        function setupPlaceholderBehavior(inputElement, initialPlaceholder) {
+            if (inputElement) {
+                inputElement.value = ''; // Ensure field is empty on load
+                inputElement.setAttribute('placeholder', initialPlaceholder); // Set initial placeholder
+
+                inputElement.addEventListener('focus', function() {
+                    this.setAttribute('placeholder', ''); // Clear placeholder on focus
+                });
+                inputElement.addEventListener('blur', function() {
+                    if (this.value === '') { // Set placeholder back if field is empty on blur
+                        this.setAttribute('placeholder', initialPlaceholder);
+                    }
+                });
+            }
+        }
+
+        setupPlaceholderBehavior(usernameInput, 'Enter your username');
+        setupPlaceholderBehavior(passwordInput, 'Enter your password');
+
+        if (loginForm) {
+            // Reset the form to aggressively clear autofill values
+            loginForm.reset();
+        }
+    };
+</script>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+{% endblock %}

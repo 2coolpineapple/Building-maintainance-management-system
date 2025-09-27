@@ -1,0 +1,325 @@
+{% extends 'core/base.html' %}
+{% load custom_filters %} {# Assuming custom_filters contains 'addclass' #}
+
+{% block content %}
+<style>
+    /* Google Fonts - For a more friendly and modern look */
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Lato:wght@400;700&display=swap');
+
+    body {
+        background-color: #f0f2f5; /* Light grey background for a softer feel */
+        font-family: 'Lato', sans-serif;
+        color: #333;
+    }
+
+    .container.py-4 {
+        padding-top: 6rem !important; /* More space from navbar */
+        padding-bottom: 4rem !important;
+    }
+
+    .card {
+        border: none; /* Remove default Bootstrap card border */
+        border-radius: 15px; /* Softer rounded corners */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* More pronounced shadow */
+        overflow: hidden; /* Ensures rounded corners apply to header */
+        animation: fadeInScale 0.7s ease-out forwards; /* Entrance animation */
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #0056b3, #003366); /* Gradient header */
+        color: #ffffff;
+        padding: 1.5rem 2rem; /* More padding */
+        border-bottom: none; /* Remove header border */
+        font-family: 'Montserrat', sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .card-header h4 {
+        font-weight: 700;
+        margin-bottom: 0;
+        font-size: 1.8rem; /* Slightly larger title */
+        letter-spacing: 0.5px;
+    }
+
+    .card-header .fas {
+        margin-right: 15px;
+        font-size: 2rem; /* Larger icon */
+    }
+
+    .card-body {
+        padding: 2.5rem; /* Increased padding inside body */
+        background-color: #ffffff;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 0.5rem;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 8px; /* Softer input fields */
+        padding: 0.75rem 1rem;
+        border: 1px solid #ced4da;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+        outline: none;
+    }
+
+    .form-check-label {
+        font-weight: 400; /* Regular weight for checkbox label */
+        color: #333;
+    }
+
+    .form-check-input:checked {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .invalid-feedback {
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+        color: #dc3545;
+    }
+
+    .form-text {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(45deg, #28a745, #218838); /* Green gradient for submit */
+        border: none;
+        padding: 0.8rem 1.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+        background: linear-gradient(45deg, #218838, #1e7e34);
+    }
+
+    .btn-outline-secondary {
+        border: 1px solid #6c757d;
+        color: #6c757d;
+        padding: 0.8rem 1.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        color: #ffffff;
+        transform: translateY(-3px);
+    }
+
+    /* Custom styles for specific fields */
+    #id_complaint_type,
+    #id_location_type {
+        min-height: 45px; /* Ensure consistent height for selects */
+    }
+
+    #id_description {
+        min-height: 120px; /* Taller textarea */
+        resize: vertical; /* Allow vertical resizing */
+    }
+
+    /* Hide valid feedback tick for optional fields */
+    input:not([required]).form-control:valid,
+    select:not([required]).form-select:valid,
+    textarea:not([required]).form-control:valid {
+        background-image: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Animations */
+    @keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    /* Media Queries for responsiveness */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1.5rem;
+        }
+        .card-header h4 {
+            font-size: 1.5rem;
+        }
+        .card-header .fas {
+            font-size: 1.7rem;
+            margin-right: 10px;
+        }
+        .form-control, .form-select, .btn {
+            padding: 0.6rem 1rem;
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-9 col-lg-7"> {# Slightly wider card #}
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-file-alt"></i> Lodge a New Complaint
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        {# NEW FIELD: Your Name #}
+                        <div class="mb-3">
+                            <label for="id_your_name" class="form-label">
+                                Your Name <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="id_your_name" name="your_name" required placeholder="Enter your full name">
+                            <div class="form-text">Please provide your full name for clear communication regarding your complaint.</div>
+                            <div class="invalid-feedback">
+                                Please provide your name.
+                            </div>
+                        </div>
+
+                        {# Loop through existing form fields provided by Django #}
+                        {% for field in form %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label">
+                                    {{ field.label }}
+                                    {% if field.field.required %}
+                                    <span class="text-danger">*</span>
+                                    {% endif %}
+                                </label>
+                                {% if field.name == 'acknowledgment' %}
+                                    <div class="form-check">
+                                        {{ field|addclass:'form-check-input' }}
+                                        <label class="form-check-label" for="{{ field.id_for_label }}">
+                                            I confirm that this complaint is genuine and requires attention.
+                                        </label>
+                                        <div class="form-text">By checking this, you verify the accuracy of your complaint.</div>
+                                        {% if field.errors %}
+                                        <div class="invalid-feedback" style="display:block;">
+                                            {{ field.errors|join:', ' }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                {% elif field.field.widget.input_type == 'select' %}
+                                    {{ field|addclass:'form-select' }}
+                                    <div class="form-text">{% if field.name == 'complaint_type' %}Select the primary category that best describes your complaint.
+                                    {% elif field.name == 'location_type' %}Specify if the issue is in a train coach, at a station, or elsewhere.
+                                    {% endif %}</div>
+                                {% else %}
+                                    {{ field|addclass:'form-control' }}
+                                    {% if field.name == 'complaint_id' %}<div class="form-text">If you are referencing an existing complaint, enter its ID here.</div>
+                                    {% elif field.name == 'subject' %}<div class="form-text">Provide a concise and clear summary of your complaint (e.g., "Fan not working in C1", "Dirty washroom at Platform 3").</div>
+                                    {% elif field.name == 'description' %}<div class="form-text">Describe the issue in detail, including specifics like coach number, seat number, train name/number, platform, date, and time.</div>
+                                    {% elif field.name == 'contact_email' %}<div class="form-text">Enter your email address to receive updates on your complaint status.</div>
+                                    {% elif field.name == 'contact_phone' %}<div class="form-text">Provide a contact number for us to reach you if more information is needed.</div>
+                                    {% elif field.name == 'attachment' %}<div class="form-text">Upload any relevant photos or documents (e.g., image of the issue, ticket copy). Max file size: 5MB.</div>
+                                    {% elif field.help_text %}<div class="form-text">{{ field.help_text }}</div>
+                                    {% endif %}
+                                {% endif %}
+                                {% if field.errors and field.name != 'acknowledgment' %}
+                                    <div class="invalid-feedback" style="display:block;">
+                                        {{ field.errors|join:', ' }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+
+                        {# Script to add more specific dropdown options for `complaint_type` #}
+                        {# This is an example; ideally, these choices should come from your Django form #}
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const complaintTypeSelect = document.getElementById('id_complaint_type');
+                                if (complaintTypeSelect) {
+                                    const newOptions = [
+                                        { value: 'cleanliness_coach', text: 'Coach Cleanliness (Inside)' },
+                                        { value: 'cleanliness_toilet', text: 'Toilet Hygiene (Coach)' },
+                                        { value: 'cleanliness_station', text: 'Station Cleanliness (Platform/Waiting Room)' },
+                                        { value: 'electrical_fan', text: 'Electrical (Fan/Light not working)' },
+                                        { value: 'electrical_ac', text: 'Electrical (AC malfunction)' },
+                                        { value: 'water_leakage', text: 'Water Leakage (Coach/Toilet)' },
+                                        { value: 'water_supply', text: 'Water Supply (No water in toilet)' },
+                                        { value: 'seat_damage', text: 'Damaged/Broken Seats' },
+                                        { value: 'door_window_issue', text: 'Door/Window Malfunction' },
+                                        { value: 'pest_infestation', text: 'Pest/Insect Infestation' },
+                                        { value: 'safety_hazard', text: 'Safety Hazard (General)' },
+                                        { value: 'staff_behavior', text: 'Staff Behavior/Misconduct' },
+                                        { value: 'catering_issue', text: 'Catering Service Issue' },
+                                        { value: 'other_maintenance', text: 'Other Maintenance Issue' },
+                                        { value: 'other_general', text: 'Other (General Complaint)' },
+                                    ];
+
+                                    newOptions.forEach(optionData => {
+                                        let option = document.createElement('option');
+                                        option.value = optionData.value;
+                                        option.textContent = optionData.text;
+                                        if (!Array.from(complaintTypeSelect.options).some(opt => opt.value === option.value)) {
+                                            complaintTypeSelect.appendChild(option);
+                                        }
+                                    });
+                                }
+                            });
+                        </script>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Submit Complaint
+                            </button>
+                            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Dashboard
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Form validation (Bootstrap's built-in validation)
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+{% endblock %}

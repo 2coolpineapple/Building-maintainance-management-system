@@ -1,0 +1,15 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h2>You have successfully logged out.</h2>
+            <div class="mt-4">
+                <a href="{% url 'admin:index' %}" class="btn btn-primary me-2">Go to Admin Dashboard</a>
+                <a href="{% url 'login' %}" class="btn btn-secondary">Login Again</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

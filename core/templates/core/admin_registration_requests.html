@@ -1,0 +1,276 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Registration Requests</h1>
+
+    <style>
+        .filter-icon {
+            cursor: pointer;
+            margin-left: 5px;
+            color: #007bff;
+        }
+        /* Tab styles */
+        .tab {
+            overflow: hidden;
+            border-bottom: 2px solid #007bff;
+            background-color: #f8f9fa;
+            margin-bottom: 20px;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 12px 20px;
+            transition: 0.3s;
+            font-size: 18px;
+            font-weight: 600;
+            color: #007bff;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        .tab button:hover {
+            background-color: #e2e6ea;
+        }
+        .tab button.active {
+            background-color: #007bff;
+            color: white;
+            font-weight: 700;
+        }
+        /* Tab content styles */
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 5px 5px 5px;
+            background-color: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 16px;
+        }
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: 700;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e9ecef;
+        }
+        /* Button styles */
+        a.btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        a.btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+            text-decoration: none;
+            color: white;
+        }
+    </style>
+
+    <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'Pending')" id="defaultOpen">Pending Requests</button>
+        <button class="tablinks" onclick="openTab(event, 'Accepted')">Accepted Requests</button>
+        <button class="tablinks" onclick="openTab(event, 'Denied')">Denied Requests</button>
+    </div>
+
+    <div id="Pending" class="tabcontent">
+        <h3>Pending Registration Requests</h3>
+        {% if pending_requests %}
+<table id="pendingTable" class="table table-hover" style="width:100%">
+            <thead>
+                <tr>
+                    <th>ID <span class="filter-icon" data-column="0" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="0" placeholder="Filter ID" style="display:none; width: 80px;"></th>
+                    <th>Full Name <span class="filter-icon" data-column="1" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="1" placeholder="Filter Full Name" style="display:none; width: 120px;"></th>
+                    <th>Email <span class="filter-icon" data-column="2" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="2" placeholder="Filter Email" style="display:none; width: 150px;"></th>
+                    <th>Role <span class="filter-icon" data-column="3" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="3" placeholder="Filter Role" style="display:none; width: 100px;"></th>
+                    <th>Department <span class="filter-icon" data-column="4" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="4" placeholder="Filter Department" style="display:none; width: 120px;"></th>
+                    <th>Phone <span class="filter-icon" data-column="5" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="5" placeholder="Filter Phone" style="display:none; width: 120px;"></th>
+                    <th>Date <span class="filter-icon" data-column="6" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="6" placeholder="Filter Date" style="display:none; width: 120px;"></th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in pending_requests %}
+                <tr>
+                    <td>{{ req.id }}</td>
+                    <td>{{ req.full_name }}</td>
+                    <td>{{ req.email }}</td>
+                    <td>{{ req.role }}</td>
+                    <td>{{ req.department }}</td>
+                    <td>{{ req.phone }}</td>
+                    <td>{{ req.created_at|date:"F j, Y" }}</td>
+                    <td>
+                        <a href="{% url 'approve_registration_request' req.id %}" class="btn btn-primary btn-sm">Review</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No pending registration requests.</p>
+        {% endif %}
+    </div>
+
+    <div id="Accepted" class="tabcontent">
+        <h3>Accepted Registration Requests</h3>
+        {% if accepted_requests %}
+<table id="acceptedTable" class="table table-hover" style="width:100%">
+            <thead>
+                <tr>
+                    <th>ID <span class="filter-icon" data-column="0" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="0" placeholder="Filter ID" style="display:none; width: 80px;"></th>
+                    <th>Full Name <span class="filter-icon" data-column="1" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="1" placeholder="Filter Full Name" style="display:none; width: 120px;"></th>
+                    <th>Email <span class="filter-icon" data-column="2" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="2" placeholder="Filter Email" style="display:none; width: 150px;"></th>
+                    <th>Role <span class="filter-icon" data-column="3" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="3" placeholder="Filter Role" style="display:none; width: 100px;"></th>
+                    <th>Department <span class="filter-icon" data-column="4" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="4" placeholder="Filter Department" style="display:none; width: 120px;"></th>
+                    <th>Phone <span class="filter-icon" data-column="5" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="5" placeholder="Filter Phone" style="display:none; width: 120px;"></th>
+                    <th>Date <span class="filter-icon" data-column="6" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="6" placeholder="Filter Date" style="display:none; width: 120px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in accepted_requests %}
+                <tr>
+                    <td>{{ req.id }}</td>
+                    <td>{{ req.full_name }}</td>
+                    <td>{{ req.email }}</td>
+                    <td>{{ req.role }}</td>
+                    <td>{{ req.department }}</td>
+                    <td>{{ req.phone }}</td>
+                    <td>{{ req.created_at|date:"F j, Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No accepted registration requests.</p>
+        {% endif %}
+    </div>
+
+    <div id="Denied" class="tabcontent">
+        <h3>Denied Registration Requests</h3>
+        {% if denied_requests %}
+<table id="deniedTable" class="table table-hover" style="width:100%">
+            <thead>
+                <tr>
+                    <th>ID <span class="filter-icon" data-column="0" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="0" placeholder="Filter ID" style="display:none; width: 80px;"></th>
+                    <th>Full Name <span class="filter-icon" data-column="1" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="1" placeholder="Filter Full Name" style="display:none; width: 120px;"></th>
+                    <th>Email <span class="filter-icon" data-column="2" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="2" placeholder="Filter Email" style="display:none; width: 150px;"></th>
+                    <th>Role <span class="filter-icon" data-column="3" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="3" placeholder="Filter Role" style="display:none; width: 100px;"></th>
+                    <th>Department <span class="filter-icon" data-column="4" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="4" placeholder="Filter Department" style="display:none; width: 120px;"></th>
+                    <th>Phone <span class="filter-icon" data-column="5" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="5" placeholder="Filter Phone" style="display:none; width: 120px;"></th>
+                    <th>Date <span class="filter-icon" data-column="6" title="Filter" style="color: #007bff;"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="6" placeholder="Filter Date" style="display:none; width: 120px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in denied_requests %}
+                <tr>
+                    <td>{{ req.id }}</td>
+                    <td>{{ req.full_name }}</td>
+                    <td>{{ req.email }}</td>
+                    <td>{{ req.role }}</td>
+                    <td>{{ req.department }}</td>
+                    <td>{{ req.phone }}</td>
+                    <td>{{ req.created_at|date:"F j, Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No denied registration requests.</p>
+        {% endif %}
+    </div>
+
+<!-- DataTables CSS -->
+<link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+
+<!-- jQuery and DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+    function openTab(evt, tabName) {
+        // Declare all variables
+        var i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    $(document).ready(function() {
+        // Initialize DataTables for each tab table
+        var tables = ['#pendingTable', '#acceptedTable', '#deniedTable'];
+        tables.forEach(function(tableId) {
+            if ( $.fn.dataTable.isDataTable(tableId) ) {
+                $(tableId).DataTable().destroy();
+            }
+            var table = $(tableId).DataTable({
+                order: [[0, 'desc']],
+                pageLength: 10,
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search requests..."
+                }
+            });
+
+            // Toggle filter input on filter icon click
+            $(tableId + ' .filter-icon').on('click', function() {
+                var columnIndex = $(this).data('column');
+                var input = $(tableId + ' .column-filter[data-column="' + columnIndex + '"]');
+                input.toggle();
+                if (input.is(':visible')) {
+                    input.focus();
+                } else {
+                    input.val('');
+                    table.column(columnIndex).search('').draw();
+                }
+            });
+
+            // Apply column filter on input
+            $(tableId + ' .column-filter').on('keyup change', function() {
+                var columnIndex = $(this).data('column');
+                table.column(columnIndex).search(this.value).draw();
+            });
+        });
+
+        // Open default tab
+        document.getElementById("defaultOpen").click();
+    });
+</script>
+</div>
+{% endblock %}

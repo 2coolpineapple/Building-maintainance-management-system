@@ -1,0 +1,153 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>{% if user.is_officer %}My Assigned Complaints{% else %}My Complaints{% endif %}</h2>
+        </div>
+        {% if not user.is_officer %}
+        <div class="col-auto">
+            <a href="{% url 'submit_complaint' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> New Complaint
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if complaints %}
+    <div class="table-responsive">
+        <table class="table table-hover" id="userComplaintsTable">
+            <thead class="table-light">
+                <tr>
+                    <th>ID <span class="filter-icon" data-column="0" title="Filter"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="0" placeholder="Filter ID" style="display:none; width: 80px;"></th>
+                    <th>Category <span class="filter-icon" data-column="1" title="Filter"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="1" placeholder="Filter Category" style="display:none; width: 100px;"></th>
+                    <th>Location <span class="filter-icon" data-column="2" title="Filter"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="2" placeholder="Filter Location" style="display:none; width: 100px;"></th>
+                    <th>Zone <span class="filter-icon" data-column="3" title="Filter"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="3" placeholder="Filter Zone" style="display:none; width: 100px;"></th>
+                    <th>Building <span class="filter-icon" data-column="4" title="Filter"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="4" placeholder="Filter Building" style="display:none; width: 100px;"></th>
+                    <th>Priority <span class="filter-icon" data-column="5" title="Filter"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="5" placeholder="Filter Priority" style="display:none; width: 100px;"></th>
+                    <th>Status <span class="filter-icon" data-column="6" title="Filter"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="6" placeholder="Filter Status" style="display:none; width: 100px;"></th>
+                    <th>Created <span class="filter-icon" data-column="7" title="Filter"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="7" placeholder="Filter Created" style="display:none; width: 100px;"></th>
+                    <th>Last Updated <span class="filter-icon" data-column="8" title="Filter"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="8" placeholder="Filter Last Updated" style="display:none; width: 100px;"></th>
+                    {% if user.is_staff or user.is_officer %}
+                    <th>Submitted By <span class="filter-icon" data-column="9" title="Filter"><i class="fas fa-filter"></i></span><input type="text" class="column-filter" data-column="9" placeholder="Filter Submitted By" style="display:none; width: 120px;"></th>
+                    {% endif %}
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for complaint in complaints %}
+                <tr>
+                    <td>#{{ complaint.id }}</td>
+                    <td>{{ complaint.category }}</td>
+                    <td>{{ complaint.location }}</td>
+                    <td>{{ complaint.zone|default:"-" }}</td>
+                    <td>{{ complaint.building|default:"-" }}</td>
+                    <td>
+                        {% if complaint.priority == 'high' %}
+                        <span class="badge bg-danger">High</span>
+                        {% elif complaint.priority == 'urgent' %}
+                        <span class="badge bg-danger">Urgent</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Normal</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if complaint.status == 'pending' %}
+                        <span class="badge bg-warning">Pending</span>
+                        {% elif complaint.status == 'in_progress' %}
+                        <span class="badge bg-info">In Progress</span>
+                        {% else %}
+                        <span class="badge bg-success">Resolved</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ complaint.created_at|date:"M d, Y" }}</td>
+                    <td>{{ complaint.updated_at|date:"M d, Y" }}</td>
+                    {% if user.is_staff or user.is_officer %}
+                    <td>{{ complaint.user.username }}</td>
+                    {% endif %}
+                    <td>
+                        <a href="{% url 'complaint_detail' complaint.pk %}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye"></i> View
+                        </a>
+                        {% if complaint.status == 'resolved' and complaint.user == user and not complaint.feedback %}
+                        <a href="{% url 'submit_feedback' complaint.pk %}" class="btn btn-sm btn-outline-success">
+                            <i class="fas fa-star"></i> Feedback
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        {% if user.is_officer %}
+        No complaints have been assigned to you yet.
+        {% else %}
+        You haven't submitted any complaints yet.
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+<!-- DataTables CSS -->
+<link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+
+<!-- jQuery and DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        var table;
+        if ( $.fn.dataTable.isDataTable('#userComplaintsTable') ) {
+            table = $('#userComplaintsTable').DataTable();
+            table.destroy();
+        }
+        table = $('#userComplaintsTable').DataTable({
+            order: [[0, 'desc']],
+            pageLength: 10,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search complaints..."
+            }
+        });
+
+        // Toggle filter input on filter icon click
+        $('.filter-icon').on('click', function() {
+            var columnIndex = $(this).data('column');
+            var input = $('.column-filter[data-column="' + columnIndex + '"]');
+            input.toggle();
+            if (input.is(':visible')) {
+                input.focus();
+            } else {
+                input.val('');
+                table.column(columnIndex).search('').draw();
+            }
+        });
+
+        // Apply column filter on input
+        $('.column-filter').on('keyup change', function() {
+            var columnIndex = $(this).data('column');
+            table.column(columnIndex).search(this.value).draw();
+        });
+    });
+</script>
+
+<style>
+    .filter-icon {
+        cursor: pointer;
+        margin-left: 5px;
+        color: #007bff;
+    }
+    .column-filter {
+        margin-top: 5px;
+        font-size: 0.9em;
+        padding: 2px 5px;
+        display: none;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,663 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block navbar %}{% endblock %}
+{% block content %}
+<nav id="navbar" class="navbar navbar-expand navbar-light fixed-top">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center" href="{% url 'landing_page' %}">
+      <i class="fas fa-train text-warning me-2"></i>
+      <span class="fw-bold" style="color:#FFD700;">Indian Railways Maintenance</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav align-items-center">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'landing_page' %}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'submit_complaint' %}">Complaint Form</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'track_complaint' %}">Track Complaint</a>
+        </li>
+        <li class="nav-item dropdown ms-3">
+          <a class="nav-link dropdown-toggle" href="#" id="contactDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-phone"></i> Contact Info
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="contactDropdown">
+            <li><a class="dropdown-item" href="tel:+911234567890">+91 12345 67890</a></li>
+            <li><a class="dropdown-item" href="mailto:support@indianrailways.gov.in">support@indianrailways.gov.in</a></li>
+            <li><a class="dropdown-item" href="tel:100">Emergency Helpline: 100</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'help_faq_agent' %}"><i class="fas fa-question-circle"></i> Help / FAQ</a>
+        </li>
+        <li class="nav-item ms-3">
+          <button id="darkModeToggle" class="btn btn-outline-secondary" title="Toggle Dark Mode">
+            <i class="fas fa-moon"></i>
+          </button>
+        </li>
+        <li class="nav-item ms-3 d-flex align-items-center">
+          <a class="btn btn-outline-primary me-2" href="{% url 'register' %}">Register</a>
+          <a class="btn btn-primary" href="{% url 'login' %}">Login</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<style>
+  /* Google Fonts */
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap');
+
+  :root {
+    --primary-blue: #003366;
+    --secondary-gold: #FFD700;
+    --light-blue-bg: #e6f0fa; /* Softer background blue */
+    --text-dark: #333;
+    --text-light: #f8f9fa;
+    --card-bg-light: #ffffff;
+    --card-shadow-light: rgba(0,0,0,0.08);
+
+    /* Dark Mode Variables */
+    --dark-mode-bg: #1a202c;
+    --dark-mode-card-bg: #2d3748;
+    --dark-mode-text: #e2e8f0;
+    --dark-mode-shadow: rgba(0,0,0,0.4);
+    --dark-mode-navbar-gradient: linear-gradient(90deg, #2a4365, #4a5568);
+  }
+
+  body {
+    font-family: 'Roboto', sans-serif;
+    background: var(--light-blue-bg);
+    color: var(--text-dark);
+    margin: 0;
+    padding-top: 70px; /* Adjust for fixed navbar */
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Navbar */
+  #navbar {
+    background: linear-gradient(90deg, var(--primary-blue), #ffffff);
+    box-shadow: 0 3px 8px var(--card-shadow-light);
+    transition: all 0.3s ease;
+    padding: 0.5rem 0;
+  }
+
+  #navbar .navbar-brand .fw-bold {
+    color: var(--secondary-gold);
+  }
+
+  #navbar .navbar-text {
+    color: var(--secondary-gold);
+    font-family: 'Open Sans', sans-serif;
+  }
+
+  #navbar .nav-link {
+    color: var(--primary-blue);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: color 0.3s ease, transform 0.2s ease;
+  }
+
+  #navbar .nav-link:hover {
+    color: #0056b3; /* A slightly darker blue on hover */
+    transform: translateY(-2px);
+  }
+
+  #navbar .btn-outline-primary,
+  #navbar .btn-primary {
+    font-weight: 600;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+
+  #navbar .btn-outline-primary {
+    color: var(--primary-blue);
+    border-color: var(--primary-blue);
+  }
+
+  #navbar .btn-outline-primary:hover {
+    background-color: var(--primary-blue);
+    color: white;
+  }
+
+  #navbar .btn-primary {
+    background-color: #007bff; /* Standard Bootstrap primary blue */
+    border-color: #007bff;
+  }
+
+  #navbar .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    transform: translateY(-2px);
+  }
+
+  #navbar .dropdown-menu {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--card-shadow-light);
+  }
+
+  #navbar .dropdown-item:hover {
+    background-color: var(--light-blue-bg);
+    color: var(--primary-blue);
+  }
+
+  /* Hero Section */
+  .hero {
+    position: relative;
+    padding: 150px 20px 100px;
+    text-align: center;
+    background: url("{% static 'images/train_station.jpg' %}") no-repeat center center/cover;
+    color: white;
+    overflow: hidden;
+    margin-bottom: 50px;
+    animation: fadeInBackground 1.5s ease-out;
+  }
+
+  .hero::before { /* Changed from ::after to ::before for z-index control */
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 51, 102, 0.75); /* Darker overlay for better text contrast */
+    z-index: 0;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+    animation: slideInUp 1s ease-out forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Roboto', sans-serif;
+    font-size: 3.8rem;
+    font-weight: 700;
+    margin-bottom: 25px;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+  }
+
+  .hero p {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1.6rem;
+    margin-bottom: 50px;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+  }
+
+  .btn-primary-hero {
+    font-size: 1.8rem;
+    padding: 20px 60px;
+    border-radius: 50px;
+    background-color: #FFC107; /* Brighter gold for hero CTA */
+    border-color: #FFC107;
+    color: var(--primary-blue);
+    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(255,193,7,0.4);
+    transition: all 0.4s ease;
+    position: relative; /* For the subtle glow effect */
+    overflow: hidden;
+  }
+
+  .btn-primary-hero:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(255,193,7,0.6);
+    background-color: #e0a800; /* Slightly darker gold on hover */
+    border-color: #e0a800;
+  }
+
+  /* Complaint Section */
+  .complaint-section {
+    text-align: center;
+    margin: 80px 0;
+    padding: 0 20px;
+  }
+
+  .complaint-section p {
+    font-size: 1.3rem;
+    color: var(--text-dark);
+  }
+
+  .complaint-section p a {
+    color: var(--primary-blue);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .complaint-section p a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+  }
+
+  /* Register/Login Prompt */
+  .register-login-prompt {
+    display: flex;
+    justify-content: center;
+    gap: 40px; /* Reduced gap slightly */
+    margin: 100px 0;
+    flex-wrap: wrap;
+    padding: 0 20px;
+  }
+
+  .card-prompt {
+    flex: 1; /* Allow cards to grow */
+    min-width: 300px; /* Ensure minimum width */
+    max-width: 450px; /* Prevent cards from getting too wide */
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px var(--card-shadow-light);
+    background: var(--card-bg-light);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .card-prompt:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+  }
+
+  .card-prompt h3 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--primary-blue);
+    font-size: 1.8rem;
+  }
+
+  .card-prompt p {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    color: #555;
+    flex-grow: 1; /* Pushes button to bottom */
+  }
+
+  .card-prompt .btn {
+    width: 80%; /* Make buttons wider */
+    padding: 12px 25px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  /* Additional Features */
+  .additional-features {
+    background: #f8f9fa; /* Lighter background for this section */
+    padding: 60px 30px;
+    border-radius: 20px;
+    max-width: 1000px;
+    margin: 0 auto 100px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    text-align: center;
+  }
+
+  .additional-features h2 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    margin-bottom: 35px;
+    color: var(--primary-blue);
+    font-size: 2.5rem;
+  }
+
+  .additional-features ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto 50px auto;
+    font-size: 1.15rem;
+    color: var(--text-dark);
+    max-width: 600px; /* Constrain width for readability */
+    text-align: left; /* Align text within list items */
+  }
+
+  .additional-features ul li {
+    margin-bottom: 15px;
+    padding-left: 25px;
+    position: relative;
+  }
+
+  .additional-features ul li::before {
+    content: "\2713"; /* Checkmark Unicode character */
+    color: #28a745; /* Green checkmark */
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .feature-icons {
+    display: flex;
+    justify-content: center; /* Center icons */
+    gap: 40px; /* Increased gap for better spacing */
+    margin-top: 40px;
+    flex-wrap: wrap;
+  }
+
+  .feature-icons div {
+    text-align: center;
+    font-size: 3.5rem; /* Slightly larger icons */
+    color: #17a2b8; /* A vibrant teal for icons */
+    min-width: 120px;
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+
+  .feature-icons div:hover {
+    transform: translateY(-8px);
+    color: #007bff; /* Primary blue on hover */
+  }
+
+  .feature-icons div span {
+    display: block;
+    margin-top: 10px;
+    font-size: 1.1rem; /* Larger text for icon labels */
+    color: var(--text-dark);
+    font-weight: 500;
+  }
+
+  /* Dark Mode Styles */
+  body.dark-mode {
+    background-color: var(--dark-mode-bg);
+    color: var(--dark-mode-text);
+  }
+
+  body.dark-mode #navbar {
+    background: var(--dark-mode-navbar-gradient);
+    box-shadow: 0 3px 8px var(--dark-mode-shadow);
+  }
+
+  body.dark-mode #navbar .nav-link,
+  body.dark-mode #navbar .navbar-text {
+    color: var(--dark-mode-text);
+  }
+
+  body.dark-mode #navbar .nav-link:hover {
+    color: var(--secondary-gold);
+  }
+
+  body.dark-mode #navbar .btn-outline-primary {
+    color: var(--secondary-gold);
+    border-color: var(--secondary-gold);
+  }
+
+  body.dark-mode #navbar .btn-outline-primary:hover {
+    background-color: var(--secondary-gold);
+    color: var(--primary-blue);
+  }
+
+  body.dark-mode #navbar .btn-primary {
+    background-color: var(--secondary-gold);
+    border-color: var(--secondary-gold);
+    color: var(--primary-blue);
+  }
+
+  body.dark-mode #navbar .btn-primary:hover {
+    background-color: #e0a800;
+    border-color: #e0a800;
+  }
+
+  body.dark-mode #navbar .dropdown-menu {
+    background-color: var(--dark-mode-card-bg);
+    box-shadow: 0 4px 12px var(--dark-mode-shadow);
+  }
+
+  body.dark-mode #navbar .dropdown-item {
+    color: var(--dark-mode-text);
+  }
+
+  body.dark-mode #navbar .dropdown-item:hover {
+    background-color: #4a5568;
+    color: var(--secondary-gold);
+  }
+
+  body.dark-mode .hero::before {
+    background: rgba(0, 0, 0, 0.7); /* Darker overlay for dark mode hero */
+  }
+
+  body.dark-mode .card-prompt {
+    background: var(--dark-mode-card-bg);
+    color: var(--dark-mode-text);
+    box-shadow: 0 10px 25px var(--dark-mode-shadow);
+  }
+
+  body.dark-mode .card-prompt p {
+    color: var(--dark-mode-text);
+  }
+
+  body.dark-mode .card-prompt h3 {
+    color: var(--secondary-gold);
+  }
+
+  body.dark-mode .additional-features {
+    background: var(--dark-mode-card-bg);
+    color: var(--dark-mode-text);
+    box-shadow: 0 10px 30px var(--dark-mode-shadow);
+  }
+
+  body.dark-mode .additional-features h2 {
+    color: var(--secondary-gold);
+  }
+
+  body.dark-mode .additional-features ul li {
+    color: var(--dark-mode-text);
+  }
+
+  body.dark-mode .feature-icons div {
+    color: var(--secondary-gold);
+  }
+
+  body.dark-mode .feature-icons div span {
+    color: var(--dark-mode-text);
+  }
+
+  body.dark-mode .complaint-section p {
+    color: var(--dark-mode-text);
+  }
+
+  body.dark-mode .complaint-section p a {
+    color: var(--secondary-gold);
+  }
+
+  body.dark-mode .complaint-section p a:hover {
+    color: #e0a800;
+  }
+
+
+  /* Animations */
+  @keyframes fadeInBackground {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideInUp {
+    from {
+      transform: translateY(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .hero h1 {
+      font-size: 2.8rem;
+    }
+    .hero p {
+      font-size: 1.3rem;
+    }
+    .btn-primary-hero {
+      font-size: 1.5rem;
+      padding: 15px 40px;
+    }
+    .card-prompt {
+      padding: 30px;
+    }
+    .card-prompt h3 {
+      font-size: 1.5rem;
+    }
+    .card-prompt p {
+      font-size: 1rem;
+    }
+    .additional-features {
+      padding: 40px 20px;
+    }
+    .additional-features h2 {
+      font-size: 2rem;
+    }
+    .feature-icons div {
+      font-size: 3rem;
+    }
+    .feature-icons div span {
+      font-size: 0.9rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    #navbar .navbar-text {
+      display: none !important; /* Hide tagline on smaller screens */
+    }
+    .hero {
+      padding: 100px 15px 70px;
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+    }
+    .hero p {
+      font-size: 1.1rem;
+    }
+    .btn-primary-hero {
+      font-size: 1.3rem;
+      padding: 12px 30px;
+    }
+    .register-login-prompt {
+      gap: 25px;
+    }
+    .card-prompt {
+      width: 100%; /* Full width on very small screens */
+      max-width: none;
+    }
+  }
+</style>
+
+<script>
+  // Smooth scroll for complaint form and track complaint links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+
+  // Dark mode toggle persistence
+  const darkModeToggle = document.getElementById('darkModeToggle');
+  const currentMode = localStorage.getItem('darkMode') || 'light';
+
+  if (currentMode === 'dark') {
+    document.body.classList.add('dark-mode');
+    darkModeToggle.querySelector('i').classList.remove('fa-moon');
+    darkModeToggle.querySelector('i').classList.add('fa-sun');
+  }
+
+  darkModeToggle.addEventListener('click', function() {
+    document.body.classList.toggle('dark-mode');
+    const isDark = document.body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDark ? 'dark' : 'light');
+    this.querySelector('i').classList.toggle('fa-sun');
+    this.querySelector('i').classList.toggle('fa-moon');
+  });
+
+  // Animate on scroll (basic example, consider a library like AOS for more complex needs)
+  document.addEventListener('DOMContentLoaded', () => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate__animated', 'animate__fadeInUp'); // Using animate.css classes
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.card-prompt, .additional-features, .complaint-section p').forEach(el => {
+      observer.observe(el);
+    });
+  });
+</script>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>Report a Problem, We'll Fix It!</h1>
+    <p>Seamlessly raise complaints regarding maintenance, cleanliness, or safety within seconds. Your voice helps us improve.</p>
+    <a href="http://127.0.0.1:8000/maintenance/submit/" class="btn btn-primary btn-primary-hero">File a Complaint Now <i class="fas fa-arrow-right ms-2"></i></a>
+  </div>
+</section>
+
+<section class="complaint-section" id="complaint-form">
+  <p class="mt-3">Already filed a complaint? <a href="http://127.0.0.1:8000/maintenance/track/">Track its status here.</a></p>
+</section>
+
+<section class="register-login-prompt">
+  <div class="card-prompt animate__animated animate__fadeInLeft" onclick="location.href='http://127.0.0.1:8000/maintenance/register/'" role="button" tabindex="0">
+    <h3>New User? Register Here</h3>
+    <p>Officers and maintenance staff can register to gain full access to the complaint management system and efficiently track submissions.</p>
+    <a href="http://127.0.0.1:8000/maintenance/register/" class="btn btn-primary">Register Account <i class="fas fa-user-plus ms-2"></i></a>
+  </div>
+  <div class="card-prompt animate__animated animate__fadeInRight" onclick="location.href='http://127.0.0.1:8000/accounts/login/'" role="button" tabindex="0">
+    <h3>Existing User? Login</h3>
+    <p>Access your dashboard, manage complaints, and view your complete submission history with a secure login.</p>
+    <a href="http://127.0.0.1:8000/accounts/login/" class="btn btn-primary">Login to Your Account <i class="fas fa-sign-in-alt ms-2"></i></a>
+  </div>
+</section>
+
+<section class="additional-features animate__animated animate__fadeInUp">
+  <h2>Essential Information & Features</h2>
+  
+  <h3>Railway Contact Information</h3>
+  <ul>
+    <li><i class="fas fa-phone-alt me-2"></i> <b>Phone</b>: +91 12345 67890</li>
+    <li><i class="fas fa-envelope me-2"></i> <b>Email</b>: support@indianrailways.gov.in</li>
+    <li><i class="fas fa-ambulance me-2"></i> <b>Emergency Helpline</b>: 100</li>
+  </ul>
+  
+  <h3 class="mt-5">Why Register on Our Platform?</h3>
+  <ul>
+    <li><i class="fas fa-check-circle me-2"></i> <b>Track Status</b>: Monitor the real-time progress of your submitted complaints.</li>
+    <li><i class="fas fa-history me-2"></i> <b>View History</b>: Keep a comprehensive record of all your past complaints.</li>
+    <li><i class="fas fa-bell me-2"></i> <b>Receive Updates</b>: Get timely notifications on the resolution and status changes of your issues.</li>
+    <li><i class="fas fa-shield-alt me-2"></i> <b>Enhanced Security</b>: Secure access to your complaint data and personal information.</li>
+  </ul>
+  
+  <h3 class="mt-5">Common Complaint Categories</h3>
+  <div class="feature-icons">
+    <div><i class="fas fa-broom"></i><span>Cleanliness Issues</span></div>
+    <div><i class="fas fa-lightbulb"></i><span>Electrical Problems</span></div>
+    <div><i class="fas fa-tint"></i><span>Water Leakage</span></div>
+    <div><i class="fas fa-chair"></i><span>Damaged Seating</span></div>
+    <div><i class="fas fa-exclamation-triangle"></i><span>Safety Concerns</span></div>
+    <div><i class="fas fa-toilet"></i><span>Washroom Hygiene</span></div>
+    <div><i class="fas fa-train"></i><span>Coach Maintenance</span></div>
+  </div>
+</section>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+{% endblock %}

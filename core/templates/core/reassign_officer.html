@@ -1,0 +1,86 @@
+{% extends 'core/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-user-edit"></i> Reassign {{ assignment_type|capfirst }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5>Complaint Details</h5>
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <p><strong>Category:</strong> {{ complaint.category }}</p>
+                                <p><strong>Location:</strong> {{ complaint.location }}</p>
+                                <p><strong>Status:</strong> 
+                                    <span class="badge {% if complaint.status == 'pending' %}bg-warning
+                                                     {% elif complaint.status == 'in_progress' %}bg-info
+                                                     {% else %}bg-success{% endif %}">
+                                        {{ complaint.get_status_display }}
+                                    </span>
+                                </p>
+                                <p class="mb-0"><strong>Current {{ assignment_type|capfirst }}:</strong> 
+                                    {% if assignment_type == 'officer' %}
+                                        {{ complaint.assigned_officer|default:"Not Assigned" }}
+                                    {% else %}
+                                        {{ complaint.assigned_staff|default:"Not Assigned" }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="id_assigned_user" class="form-label">
+                                Select New {{ assignment_type|capfirst }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.assigned_user|addclass:"form-select" }}
+                            {% if form.assigned_user.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.assigned_user.errors|join:', ' }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Reassign {{ assignment_type|capfirst }}
+                            </button>
+                            <a href="{% url 'complaint_detail' complaint.pk %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Complaint
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Form validation
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+{% endblock %}
