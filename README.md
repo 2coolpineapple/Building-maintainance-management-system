@@ -110,13 +110,6 @@ Complaint attachments are stored in the `complaint_media/` directory. Make sure 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'complaint_media'
 ```
-
----
-
-## 🤝 Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you'd like to change.
-
 ---
 
 ## 📄 License
